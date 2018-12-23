@@ -10,12 +10,21 @@ import           Data.List
 
 main = do 
     view ".todo.txt"
-    add ".todo.txt"
-    -- complete ".todo.txt"
+    command <- cmd
+    dispatch command
 
-    -- Todo: /で各コマンドを入力できるようにする
-    -- command <- getLine
-    -- dispatch command
+
+-- TODO: コマンド以外が入力された場合に、エラーになるようにする
+dispatch :: String -> IO ()
+dispatch "/view" = view ".todo.txt"
+dispatch "/add" = add ".todo.txt"
+dispatch "/complete" = complete ".todo.txt" 
+
+
+cmd :: IO String 
+cmd = do 
+    putStrLn "Please enter command ..."
+    getLine
 
 
 view :: String -> IO ()
