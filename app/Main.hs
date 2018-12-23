@@ -20,11 +20,16 @@ main = do
     dispatch command
 
 
--- TODO: コマンド以外が入力された場合に、エラーになるようにする
 dispatch :: String -> IO ()
 dispatch "/view" = view
 dispatch "/add" = add
 dispatch "/complete" = complete
+dispatch command = doesntExist command
+
+
+doesntExist :: String -> IO ()
+doesntExist command =
+    putStrLn $ "The " ++ command ++ " command doesn't exist"
 
 
 cmd :: IO String 
