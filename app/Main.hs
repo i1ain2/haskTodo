@@ -61,11 +61,15 @@ complete = do
 
     putStrLn "select complete task ..."
     numberString <- getLine
-    -- TODO: todoを削除するのではなく、xを付与する
     let number = read numberString
-        newTodoItems = unlines $ delete (todoTasks !! number) todoTasks
+        completed = "- [x] " ++ drop 6 (todoTasks !! number)
+        newTodoItems = unlines $ replaceAt number completed todoTasks
     (tempName, tempHandle) <- openTempFile "." "temp"
     hPutStr tempHandle newTodoItems
     hClose tempHandle
     removeFile todoFileName
     renameFile tempName todoFileName
+
+
+replaceAt :: Int -> a -> [a] -> [a]
+replaceAt n x xs = (take n xs) ++ [x] ++ (drop (n+1) xs)
