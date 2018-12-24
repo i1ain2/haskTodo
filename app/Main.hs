@@ -14,26 +14,25 @@ import           Data.List
 -}
 todoFileName = ".todo.txt"
 
-main = do 
+main = do
     view
     command <- cmd
     dispatch command
 
 
 dispatch :: String -> IO ()
-dispatch "/view" = view
-dispatch "/add" = add
+dispatch "/view"     = view
+dispatch "/add"      = add
 dispatch "/complete" = complete
-dispatch command = doesntExist command
+dispatch command     = doesntExist command
 
 
 doesntExist :: String -> IO ()
-doesntExist command =
-    putStrLn $ "The " ++ command ++ " command doesn't exist"
+doesntExist command = putStrLn $ "The " ++ command ++ " command doesn't exist"
 
 
-cmd :: IO String 
-cmd = do 
+cmd :: IO String
+cmd = do
     putStrLn "Please enter command ..."
     getLine
 
@@ -42,7 +41,8 @@ view :: IO ()
 view = do
     contents <- readFile todoFileName
     let todoTasks = lines contents
-        numberedTasks = zipWith (\n line -> show n ++ " " ++ line) [0..] todoTasks
+        numberedTasks =
+            zipWith (\n line -> show n ++ " " ++ line) [0 ..] todoTasks
     putStrLn "Todo List"
     putStr $ unlines numberedTasks
 
@@ -61,8 +61,8 @@ complete = do
 
     putStrLn "select complete task ..."
     numberString <- getLine
-    let number = read numberString
-        completed = "- [x] " ++ drop 6 (todoTasks !! number)
+    let number       = read numberString
+        completed    = "- [x] " ++ drop 6 (todoTasks !! number)
         newTodoItems = unlines $ replaceAt number completed todoTasks
     (tempName, tempHandle) <- openTempFile "." "temp"
     hPutStr tempHandle newTodoItems
@@ -72,4 +72,4 @@ complete = do
 
 
 replaceAt :: Int -> a -> [a] -> [a]
-replaceAt n x xs = (take n xs) ++ [x] ++ (drop (n+1) xs)
+replaceAt n x xs = (take n xs) ++ [x] ++ (drop (n + 1) xs)
