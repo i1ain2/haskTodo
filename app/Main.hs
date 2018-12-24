@@ -24,6 +24,7 @@ dispatch :: String -> IO ()
 dispatch "/view"     = view
 dispatch "/add"      = add
 dispatch "/complete" = complete
+dispatch "/clear"    = clear
 dispatch command     = doesntExist command
 
 
@@ -64,6 +65,17 @@ complete = do
     let number       = read numberString
         completed    = "- [x] " ++ drop 6 (todoTasks !! number)
         newTodoItems = unlines $ replaceAt number completed todoTasks
+    (tempName, tempHandle) <- openTempFile "." "temp"
+    hPutStr tempHandle newTodoItems
+    hClose tempHandle
+    removeFile todoFileName
+    renameFile tempName todoFileName
+
+
+clear :: IO ()
+clear = do
+    contents <- readFile todoFileName
+    let newTodoItems = unlines $ filter (\x -> take 5 x /= "- [x]") (lines contents)
     (tempName, tempHandle) <- openTempFile "." "temp"
     hPutStr tempHandle newTodoItems
     hClose tempHandle
