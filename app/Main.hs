@@ -5,6 +5,7 @@
 module Main where
 
 import           System.IO
+import           System.Exit
 import           System.Directory
 import           Data.List
 
@@ -14,18 +15,30 @@ import           Data.List
 -}
 todoFileName = ".todo.txt"
 
+data Mode = Add | Complete deriving (Eq, Show, Read)
+
+
 main = do
+    putStrLn "haskTodo"
+    accept Add
+
+
+accept :: Mode -> IO ()
+accept mode = do
     view
-    command <- cmd
-    dispatch command
+    contents <- getLine
+    dispatch mode contents
+    accept mode
 
 
-dispatch :: String -> IO ()
-dispatch "/view"     = view
-dispatch "/add"      = add
-dispatch "/complete" = complete
-dispatch "/clear"    = clear
-dispatch command     = doesntExist command
+dispatch :: Mode -> String -> IO ()
+dispatch _        "/view"           = view
+dispatch _        "/add"            = accept Add
+dispatch _        "/complete"       = accept Complete
+dispatch _        "/clear"          = clear
+dispatch _        command@('/' : _) = doesntExist command
+dispatch Add      task              = add task
+dispatch Complete number            = complete (read number)
 
 
 doesntExist :: String -> IO ()
@@ -48,22 +61,17 @@ view = do
     putStr $ unlines numberedTasks
 
 
-add :: IO ()
-add = do
-    putStrLn "add task ..."
-    todoItem <- getLine
+add :: String -> IO ()
+add todoItem = do
     appendFile todoFileName ("- [ ] " ++ todoItem ++ "\n")
 
 
-complete :: IO ()
-complete = do
+complete :: Int -> IO ()
+complete number = do
     contents <- readFile todoFileName
     let todoTasks = lines contents
 
-    putStrLn "select complete task ..."
-    numberString <- getLine
-    let number       = read numberString
-        completed    = "- [x] " ++ drop 6 (todoTasks !! number)
+    let completed    = "- [x] " ++ drop 6 (todoTasks !! number)
         newTodoItems = unlines $ replaceAt number completed todoTasks
     (tempName, tempHandle) <- openTempFile "." "temp"
     hPutStr tempHandle newTodoItems
@@ -75,7 +83,8 @@ complete = do
 clear :: IO ()
 clear = do
     contents <- readFile todoFileName
-    let newTodoItems = unlines $ filter (\x -> take 5 x /= "- [x]") (lines contents)
+    let newTodoItems =
+            unlines $ filter (\x -> take 5 x /= "- [x]") (lines contents)
     (tempName, tempHandle) <- openTempFile "." "temp"
     hPutStr tempHandle newTodoItems
     hClose tempHandle
