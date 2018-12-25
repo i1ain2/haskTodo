@@ -36,6 +36,7 @@ dispatch _        "/view"           = view
 dispatch _        "/add"            = accept Add
 dispatch _        "/complete"       = accept Complete
 dispatch _        "/clear"          = clear
+dispatch _        "/exit"           = exitSuccess
 dispatch _        command@('/' : _) = doesntExist command
 dispatch Add      task              = add task
 dispatch Complete number            = complete (read number)
