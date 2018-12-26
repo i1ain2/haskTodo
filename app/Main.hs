@@ -73,11 +73,7 @@ complete number = do
 
     let completed    = "- [x] " ++ drop 6 (todoTasks !! number)
         newTodoItems = unlines $ replaceAt number completed todoTasks
-    (tempName, tempHandle) <- openTempFile "." "temp"
-    hPutStr tempHandle newTodoItems
-    hClose tempHandle
-    removeFile todoFileName
-    renameFile tempName todoFileName
+    updateFile newTodoItems
 
 
 clear :: IO ()
@@ -85,6 +81,11 @@ clear = do
     contents <- readFile todoFileName
     let newTodoItems =
             unlines $ filter (\x -> take 5 x /= "- [x]") (lines contents)
+    updateFile newTodoItems
+
+
+updateFile :: String -> IO ()
+updateFile newTodoItems = do
     (tempName, tempHandle) <- openTempFile "." "temp"
     hPutStr tempHandle newTodoItems
     hClose tempHandle
