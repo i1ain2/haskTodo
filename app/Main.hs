@@ -44,7 +44,7 @@ dispatch Complete number            = complete (read number)
 
 
 doesntExist :: String -> IO ()
-doesntExist command = putStrLn $ "The " ++ command ++ " command doesn't exist"
+doesntExist command = putStrLn $ "The " ++ command ++ " command doesn't exist."
 
 
 emptyString :: IO ()
