@@ -63,8 +63,7 @@ view = do
 
 
 add :: String -> IO ()
-add todoItem = do
-    appendFile todoFileName ("- [ ] " ++ todoItem ++ "\n")
+add todoItem = appendFile todoFileName ("- [ ] " ++ todoItem ++ "\n")
 
 
 complete :: Int -> IO ()
