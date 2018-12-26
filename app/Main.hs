@@ -38,12 +38,17 @@ dispatch _        "/complete"       = accept Complete
 dispatch _        "/clear"          = clear
 dispatch _        "/exit"           = exitSuccess
 dispatch _        command@('/' : _) = doesntExist command
+dispatch _        ""                = emptyString
 dispatch Add      task              = add task
 dispatch Complete number            = complete (read number)
 
 
 doesntExist :: String -> IO ()
 doesntExist command = putStrLn $ "The " ++ command ++ " command doesn't exist"
+
+
+emptyString :: IO ()
+emptyString = putStrLn "Empty. Input task or command."
 
 
 cmd :: IO String
